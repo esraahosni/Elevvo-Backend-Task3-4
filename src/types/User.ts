@@ -3,6 +3,8 @@ export interface User {
   name: string;
   email: string;
   status: 'Active' | 'Inactive';
+  password: string;
+  role: 'ADMIN' | 'USER';
 }
 
 export type CreateUserInput = Omit<User, 'id'>;

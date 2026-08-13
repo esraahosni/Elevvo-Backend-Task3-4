@@ -1,11 +1,19 @@
+import { hashPassword } from '../auth/password';
 import { User, CreateUserInput, UpdateUserInput } from '../types/User';
 
 class UserService {
   private users: User[] = [
-    { id: '1', name: 'Elevvo Intern', email: 'intern@elevvo.com', status: 'Active' },
-    ];
+  { id: '1', name: 'Elevvo Intern', email: 'intern@elevvo.com', status: 'Active', password: 'password123', role: 'ADMIN' },
+  { id: '2', name: 'Esraa Hosni', email: 'esraa@elevvo.com', status: 'Active', password: 'password123', role: 'USER' },
+  ];
 
   private nextId = 4;
+
+  async initPasswords(): Promise<void> {
+  for (const user of this.users) {
+    user.password = await hashPassword(user.password);
+  }
+}
 
   getAll(): User[] {
     return this.users;
@@ -13,6 +21,10 @@ class UserService {
 
   getById(id: string): User | undefined {
     return this.users.find((u) => u.id === id);
+  }
+
+  getByEmail(email: string): User | undefined {
+    return this.users.find((u) => u.email === email);
   }
 
   create(input: CreateUserInput): User {
@@ -36,3 +48,4 @@ class UserService {
   }
 }
 export const userService = new UserService();
+userService.initPasswords();
