@@ -6,7 +6,7 @@ import { authorizeRole } from '../middleware/authorizeRole';
 const router = Router();
 router.get('/',authenticateToken, getAllUsers);
 router.get('/:id', authenticateToken, getUserProfile);
-router.post('/', authenticateToken, createUser);
+router.post('/', createUser);
 router.put('/:id', authenticateToken, updateUser);
 router.delete('/:id',authenticateToken, authorizeRole('ADMIN'), deleteUser);
 

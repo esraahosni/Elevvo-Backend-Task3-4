@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { userService } from '../services/UserServices';
 import { comparePassword } from '../auth/password';
 import { generateToken } from '../auth/jwt';
+import { prisma } from '../lib/prisma';
 
 export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
@@ -9,9 +9,11 @@ export const login = async (req: Request, res: Response) => {
         return res.status(400).json({ message: 'Email and password are required' });
     }
     try {
-        const user = userService.getByEmail(email);
+        const user = await prisma.user.findUnique({
+            where: { email }
+        });
         if (!user) {
-            return res.status(404).json({ message: 'Invalid credentials' });
+            return res.status(401).json({ message: 'Invalid credentials' });
         }
         const isMatch = await comparePassword(password, user.password);
         if (!isMatch) {
@@ -22,4 +24,4 @@ export const login = async (req: Request, res: Response) => {
     } catch (error) {
         return res.status(500).json({ message: 'Internal server error' });
     }
-};    
+};
